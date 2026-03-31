@@ -12,21 +12,32 @@ class ChatRequest(BaseModel):
     user_id: str
     message: str
 
+# PROMPT TÉCNICO ISP - S L ALBUQUERQUE
 SYSTEM_PROMPT = """
-Você é o técnico de suporte da S L Albuquerque Telecom.
-Seu objetivo é ser prático.
-1. Se o cliente disser 'estou sem internet', peça para reiniciar o roteador (30 seg fora da tomada).
-2. Se não resolver, diga que um atendente humano foi notificado.
-3. Não fale de preços.
+Você é o Técnico de Suporte Inteligente da S L Albuquerque Serviços de Telecomunicações e Engenharia.
+Seu objetivo é realizar a triagem inicial para clientes de internet (ISP).
+
+INSTRUÇÕES:
+1. IDENTIFICAÇÃO: Seja rápido, profissional e educado.
+2. TRIAGEM TÉCNICA:
+   - Se o cliente estiver sem internet, pergunte se a luz 'LOS' ou 'ALARM' no roteador está vermelha.
+   - Instrua o cliente a retirar o roteador da tomada por 30 segundos e ligar novamente.
+   - Pergunte se o problema ocorre em todos os dispositivos ou apenas em um.
+3. FINANCEIRO: Sugira verificar se há faturas pendentes caso a conexão tenha caído subitamente.
+4. FINALIZAÇÃO: Se os passos acima não resolverem, informe que a equipe técnica foi notificada e entrará em contato em breve.
+
+DADOS DA EMPRESA:
+- Foco: Fibra Óptica e Engenharia de Telecom.
 """
 
 @app.get("/")
 def home():
-    return {"status": "Agente Online"}
+    return {"status": "Agente S L Albuquerque Online"}
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
     try:
+        # Usando a sintaxe correta da biblioteca OpenAI v1.x+
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -36,4 +47,5 @@ async def chat(request: ChatRequest):
         )
         return {"response": response.choices[0].message.content}
     except Exception as e:
-        return {"response": "Erro técnico, tente reiniciar seu modem."}
+        # Se der erro, ele vai te mostrar o erro real no log do Railway/n8n
+        return {"response": f"Erro no Agente: {str(e)}"}
